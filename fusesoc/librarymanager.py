@@ -38,7 +38,7 @@ class Library:
         self.name = name
         self.location = location
         self.sync_type = sync_type or "local"
-        self.sync_uri = os.path.expandvars(sync_uri)
+        self.sync_uri = os.path.expandvars(sync_uri) if sync_uri else None
         self.sync_version = sync_version
         self.auto_sync = auto_sync
 
