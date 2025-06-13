@@ -27,10 +27,7 @@ class Gitlab(Provider):
 
         # Encode the project path in case there are slashes
         project = urlparse.quote_plus(project)
-        url = urlparse.quote(
-            f"https://{host}/api/v4/projects/{project}"
-            + f"/repository/archive.tar.gz?sha={ref}"
-        )
+        url = f"https://{host}/api/v4/projects/{project}/repository/archive.tar.gz?ref={ref}"
 
         # Check for common authentication tokens in the environment
         if "GITLAB_TOKEN" in os.environ:
