@@ -33,6 +33,7 @@ from fusesoc.config import Config
 from fusesoc.coremanager import DependencyError
 from fusesoc.fusesoc import Fusesoc
 from fusesoc.librarymanager import Library
+from fusesoc.vlnv import Vlnv
 
 logger = logging.getLogger(__name__)
 
@@ -90,13 +91,26 @@ def pgm(fs, args):
 
 
 def fetch(fs, args):
+    logger.debug(f"Fetching main core {args.core}")
     core = _get_core(fs, args.core)
 
     try:
         core.setup()
     except RuntimeError as e:
-        logger.error("Failed to fetch '{}': {}".format(core.name, str(e)))
+        logger.error(f"Failed to fetch '{core.name}': {e}")
         exit(1)
+
+    flags = core.get_flags("default")
+    core_vlnv = Vlnv(str(core))
+
+    for depend in [str(d) for d in fs.cm.get_depends(core_vlnv, flags)]:
+        try:
+            logger.debug(f"Fetching dependent core {depend}")
+            depend_core = _get_core(fs, depend)
+            depend_core.setup()
+        except RuntimeError as e:
+            logger.error(f"Failed to fetch '{depend}': {e}")
+            exit(1)
 
 
 def list_paths(fs, args):
