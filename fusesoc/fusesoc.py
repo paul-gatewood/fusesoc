@@ -32,6 +32,9 @@ class Fusesoc:
 
     def _register_libraries(self):
         cores_root_libs = [Library(acr, acr) for acr in self.config.cores_root]
+        # Check for cached cores
+        acr = self.config.cache_root
+        cores_root_libs.append(Library(acr, acr))
         # Add libraries from config file, env var and command-line
         for library in self.config.libraries + cores_root_libs:
             try:
